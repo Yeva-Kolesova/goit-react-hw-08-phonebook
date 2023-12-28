@@ -2,10 +2,10 @@ import { useState } from 'react';
 
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from 'store/operations';
-import { selectContacts } from 'store/selector';
+import { addContact } from 'store/contacts/operations';
+import { selectContacts } from 'store/contacts/selectors';
 
-const ContactForm = () => {
+export const ContactForm = () => {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -38,20 +38,22 @@ const ContactForm = () => {
   return (
     <div className="wrap">
       <form onSubmit={handleSubmit}>
+        <label htmlFor="name">Name</label>
         <input
-          type="text"
+          onChange={handleChange}
           id="name"
+          type="text"
           name="name"
           value={name}
-          onChange={handleChange}
           required
         />
+        <label htmlFor="tel">Number</label>
         <input
+          onChange={handleChange}
           id="tel"
           type="tel"
           name="number"
           value={number}
-          onChange={handleChange}
           required
         />
 
@@ -60,5 +62,3 @@ const ContactForm = () => {
     </div>
   );
 };
-
-export default ContactForm;

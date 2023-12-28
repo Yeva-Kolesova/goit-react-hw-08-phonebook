@@ -1,12 +1,29 @@
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact } from 'store/operations';
-import { selectContacts, selectFilter } from 'store/selector';
+import { deleteContact, fetchContacts } from 'store/contacts/operations';
+import { selectContacts, selectFilter } from 'store/contacts/selectors';
 
-const ContactList = () => {
+// Contact component
+const Contact = ({ id, name, number, onDeleteContact }) => {
+  return (
+    <li>
+      <p>
+        {name}: {number}
+      </p>
+      <button onClick={() => onDeleteContact(id)}>Delete</button>
+    </li>
+  );
+};
+
+// Contacts component
+export const Contacts = () => {
   const contacts = useSelector(selectContacts);
   const filterText = useSelector(selectFilter);
-
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   const handleDeleteContact = contactId => {
     dispatch(deleteContact(contactId));
@@ -22,16 +39,15 @@ const ContactList = () => {
     <>
       <ul>
         {getFilteredContacts().map(contact => (
-          <li>
-            <p>
-              {contact.name}: {contact.phone}
-            </p>
-            <button onClick={() => handleDeleteContact()}>Delete</button>
-          </li>
+          <Contact
+            key={contact.id}
+            {...contact}
+            onDeleteContact={handleDeleteContact}
+          />
         ))}
       </ul>
     </>
   );
 };
 
-export default ContactList;
+export default Contact;

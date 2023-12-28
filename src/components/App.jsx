@@ -1,30 +1,60 @@
-import ContactForm from './ContactForm/ContactForm';
-import ContactList from './Contacts/Contacts';
-import Filter from '../components/Filter/Filter';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
-import { fetchContacts } from 'store/operations';
-import { selectError, selectIsLoading } from 'store/selector';
+import { Route, Routes } from 'react-router-dom';
+import { Login } from '../Pages/LoginPage/LoginPage';
+import { Register } from '../Pages/RegisterPage/RegisterPage';
+import { Navigation } from './Navigation/Navigation';
+import { ContactsPage } from '../Pages/ContactsPage/ContactsPage';
+import { NotFound } from 'Pages/NotFound';
+import { refreshThunk } from 'store/auth/operations';
+import { PrivateRoute } from './Guards/PrivateRoute';
+import { PublicRoute } from './Guards/PublicRoute';
+import { selectIsRefresh } from '../store/auth/selectors';
 
 export const App = () => {
-  const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
-
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchContacts());
+    dispatch(refreshThunk());
   }, [dispatch]);
+
+  const isRefresh = useSelector(selectIsRefresh);
 
   return (
     <div>
-      <h1>Phonebook</h1>
-      <ContactForm />
-      {isLoading && <h1>Loading...</h1>}
-      {error && <h1>{error}</h1>}
-      <h2>Contacts</h2>
-      <Filter />
-      <ContactList />
+      {isRefresh ? (
+        <div>Loading...</div>
+      ) : (
+        <Routes>
+          <Route path="/" element={<Navigation />}>
+            <Route
+              path="/register"
+              element={
+                <PublicRoute>
+                  <Register />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/contacts"
+              element={
+                <PrivateRoute>
+                  <ContactsPage />
+                </PrivateRoute>
+              }
+            />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      )}
     </div>
   );
 };
