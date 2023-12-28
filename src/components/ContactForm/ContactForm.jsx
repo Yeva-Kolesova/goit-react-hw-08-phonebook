@@ -40,20 +40,20 @@ export const ContactForm = () => {
       <form onSubmit={handleSubmit}>
         <label htmlFor="name">Name</label>
         <input
-          onChange={handleChange}
           id="name"
           type="text"
           name="name"
           value={name}
+          onChange={handleChange}
           required
         />
         <label htmlFor="tel">Number</label>
         <input
-          onChange={handleChange}
           id="tel"
           type="tel"
           name="number"
           value={number}
+          onChange={handleChange}
           required
         />
 
